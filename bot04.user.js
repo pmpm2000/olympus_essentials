@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance
-// @version      0.0.4
+// @version      0.0.5
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot04.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot04.user.js
 // @match        http://*.grepolis.com/game/*
@@ -22,7 +22,7 @@
 // ============================
     const uw = unsafeWindow ? unsafeWindow : window;
     const minSleepTime = 30000; // miliseconds
-    const maxSleepTime = 300000; // miliseconds
+    const maxSleepTime = 120000; // miliseconds
 	function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
