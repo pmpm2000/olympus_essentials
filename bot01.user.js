@@ -91,6 +91,7 @@
 					    let text = resp.html;
                         let uniqueNicknames = [...new Set(findNicknames(text))];
                         let posts = findPostId(text);
+						console.log('[Olympus Essentials] test');
                         console.log('[Olympus Essentials] Players to invite: ', uniqueNicknames);
                         console.log('[Olympus Essentials] Posts to delete: ', posts);
                         for (let i=0; i<uniqueNicknames.length; i++) {
