@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance
-// @version      0.0.0
+// @version      0.0.1
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/blob/main/bot04.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/blob/main/bot04.user.js
 // @match        http://*.grepolis.com/game/*
@@ -17,8 +17,8 @@
 // SETTINGS FOR SPECIFIC ACCOUNT AND FORUM THREAD
 // ============================
     const account = "bot04"; // unique id of the bot's acc - no impact on the code
-    const threadId = 2838; // ID of thread that the bot should subscribe
-    const townId = 12876; // ID of the bot's town - it needs to own it all the time
+    const threadId = 3906; // ID of thread that the bot should subscribe
+    const townId = 14060; // ID of the bot's town - it needs to own it all the time
 // ============================
     const uw = unsafeWindow ? unsafeWindow : window;
     const refreshRate = 30000; // miliseconds - how often should the bot search for new posts
