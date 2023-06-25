@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Olympus Essentials - bot01
+// @name         Olympus Essentials - dev
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance
-// @version      0.0.2
+// @version      0.0.3
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot01.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot01.user.js
 // @match        http://*.grepolis.com/game/*
@@ -72,53 +72,53 @@
     }
 
 
-	async function inviteToAlliance(nickname) {
-        sleep(1000);
+	function inviteToAlliance(nickname, postId) {
+        let ret = 0;
 		let body = {"player_name":nickname,"town_id":townId,"nl_init":true};
-		uw.gpAjax.ajaxPost('alliance', 'invite', body);
-        console.log('[Olympus Essentials] Invite sent to ', nickname);
+		uw.gpAjax.ajaxPost('alliance', 'invite', body, true, {
+            success: function() {
+                console.log('[Olympus Essentials] Invite sent to ', nickname);
+                deletePost(postId);
+            },
+            error: function(layout, resp) {
+                if (resp.error == "Ten gracz został już zaproszony.") {
+                    console.log('[Olympus Essentials] Player ', nickname, ' already invited.');
+                    deletePost(postId);
+                }
+            }
+        });
+        //console.log('[Olympus Essentials] Error in sending invite to ', nickname);
 	}
 
 
-    async function deletePost(postId) {
-        sleep(1000);
+    function deletePost(postId) {
         let body = {"action":"post_delete","thread_id":threadId,"post_id":postId,"page":1,"town_id":townId,"nl_init":true};
         uw.gpAjax.ajaxPost('alliance_forum', 'forum', body);
+        console.log('[Olympus Essentials] Post ', postId, ' deleted.');
     }
 
 
     async function checkForum() {
         while(true) {
             let temp = timeToSleep();
-            console.log('[Olympus Essentials] Sleeping for ', temp/1000, ' seconds.');
+            console.log('[Olympus Essentials] Sleeping for ', Math.floor(temp/1000), ' seconds.');
             await sleep(temp);
-//            testt();
 		    let body = {"type":"go","separate":false,"thread_id":threadId,"page":1,"town_id":townId,"nl_init":true};
 		    uw.gpAjax.ajaxPost('alliance_forum', 'forum', body, true, {
 				    success: function(layout, resp, succ, t_token) {
 					    let text = resp.html;
-                        let uniqueNicknames = [...new Set(findNicknames(text))];
+                        let nicknames = findNicknames(text);
                         let posts = findPostId(text);
-						console.log('[Olympus Essentials] test');
-                        console.log('[Olympus Essentials] Players to invite: ', uniqueNicknames);
+                        console.log('[Olympus Essentials] Players to invite: ', nicknames);
                         console.log('[Olympus Essentials] Posts to delete: ', posts);
-                        for (let i=0; i<uniqueNicknames.length; i++) {
-                            inviteToAlliance(uniqueNicknames[i]);
-                        }
-                        for (let i=0; i<posts.length; i++) {
-                            deletePost(posts[i]);
+                        for (let i=0; i<nicknames.length; i++) {
+                            inviteToAlliance(nicknames[i], posts[i]);
+                            sleep(1000);
                         }
 				    }
 			    });
         }
     }
-
-
-//    function testt() {
-//        var temple_commands = views.layout.layout_toolbar_activities.controller.getTempleCommands();
-//        console.log('Wartość temple_commands:', temple_commands);
-//   }
-
 
     console.log('[Olympus Essentials] Script started.');
     checkForum();
