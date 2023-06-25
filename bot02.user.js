@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Olympus Essentials - dev
+// @name         Olympus Essentials - bot02
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance
