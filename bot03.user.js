@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance
-// @version      0.0.3
+// @version      0.0.4
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot03.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot03.user.js
 // @match        http://*.grepolis.com/game/*
@@ -81,7 +81,7 @@
                 deletePost(postId);
             },
             error: function(layout, resp) {
-                if (resp.error == "Ten gracz został już zaproszony.") {
+                if (resp.error == "Ten gracz został już zaproszony." || resp.error == "Ten gracz jest już członkiem tego sojuszu.") {
                     console.log('[Olympus Essentials] Player ', nickname, ' already invited.');
                     deletePost(postId);
                 }
