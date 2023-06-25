@@ -4,8 +4,8 @@
 // @author       pmpm2000
 // @description  Auto-invite to alliance
 // @version      0.0.1
-// @downloadURL  https://github.com/pmpm2000/olympus_essentials/blob/main/bot04.user.js
-// @updateURL    https://github.com/pmpm2000/olympus_essentials/blob/main/bot04.user.js
+// @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot04.user.js
+// @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot04.user.js
 // @match        http://*.grepolis.com/game/*
 // @match        https://*.grepolis.com/game/*
 // @grant        GM_xmlhttpRequest
