@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance
-// @version      0.0.0
+// @version      0.0.1
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/blob/main/bot01.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/blob/main/bot01.user.js
 // @match        http://*.grepolis.com/game/*
