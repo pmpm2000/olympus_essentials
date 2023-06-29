@@ -2,8 +2,9 @@
 // @name         Olympus Essentials - bot01
 // @namespace    oess
 // @author       pmpm2000
-// @description  Auto-invite to alliance
-// @version      0.0.5
+// @description  Auto-invite to alliance by alliance forum, invite through discord bot
+// @version      0.1.0
+// @connect      *
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot01.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot01.user.js
 // @match        http://*.grepolis.com/game/*
@@ -13,16 +14,19 @@
 
 (function() {
     'use strict';
-// ============================
-// SETTINGS FOR SPECIFIC ACCOUNT AND FORUM THREAD
-// ============================
-    const account = "bot01"; // unique id of the bot's acc - no impact on the code
-    const threadId = 2838; // ID of thread that the bot should subscribe
-    const townId = 12876; // ID of the bot's town - it needs to own it all the time
-// ============================
     const uw = unsafeWindow ? unsafeWindow : window;
+    const account = "bot01"; // unique id of the bot's acc - used to get data from external library
     const minSleepTime = 30000; // miliseconds
     const maxSleepTime = 120000; // miliseconds
+    let threadId=0, townId=0;
+
+
+    function initialize() {
+        threadId = uw.threadIds[account]; // ID of thread that the bot should subscribe
+        townId = uw.townIds[account]; // ID of the bot's town - it needs to own it all the time
+    }
+
+
 	function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -87,39 +91,69 @@
                 }
             }
         });
-        //console.log('[Olympus Essentials] Error in sending invite to ', nickname);
 	}
 
 
     function deletePost(postId) {
+        if (postId == -1) return;
         let body = {"action":"post_delete","thread_id":threadId,"post_id":postId,"page":1,"town_id":townId,"nl_init":true};
         uw.gpAjax.ajaxPost('alliance_forum', 'forum', body);
         console.log('[Olympus Essentials] Post ', postId, ' deleted.');
     }
 
 
-    async function checkForum() {
-        while(true) {
-            let temp = timeToSleep();
-            console.log('[Olympus Essentials] Sleeping for ', Math.floor(temp/1000), ' seconds.');
-            await sleep(temp);
+    function checkForum() {
 		    let body = {"type":"go","separate":false,"thread_id":threadId,"page":1,"town_id":townId,"nl_init":true};
 		    uw.gpAjax.ajaxPost('alliance_forum', 'forum', body, true, {
 				    success: function(layout, resp, succ, t_token) {
 					    let text = resp.html;
                         let nicknames = findNicknames(text);
                         let posts = findPostId(text);
-                        console.log('[Olympus Essentials] Players to invite: ', nicknames);
+                        console.log('[Olympus Essentials] Players to invite (forum): ', nicknames);
                         console.log('[Olympus Essentials] Posts to delete: ', posts);
                         for (let i=0; i<nicknames.length; i++) {
                             inviteToAlliance(nicknames[i], posts[i]);
-                            sleep(1000);
                         }
 				    }
 			    });
+    }
+
+
+    function checkDiscord() {
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: uw.discordUrls[account], // data from external library
+            headers: {
+                "Content-Type": "application/json"
+            },
+            responseType: "json",
+            onload: function(response) {
+                let toInvite = response.response.invites;
+                console.log("[Olympus Essentials] Players to invite (Discord):", toInvite);
+                for(let i=0; i<toInvite.length; i++) {
+                    inviteToAlliance(toInvite[i], -1);
+                }
+            },
+            onerror: function(a) {
+                console.log("[Olympus Essentials] Error:", a);
+            }
+        });
+    }
+
+
+    async function waitForRefresh() {
+        while(true) {
+            let temp = timeToSleep();
+            console.log('[Olympus Essentials] Sleeping for ', Math.floor(temp/1000), ' seconds.');
+            await sleep(temp);
+            checkForum();
+            checkDiscord();
         }
     }
 
-    console.log('[Olympus Essentials] Script started.');
-    checkForum();
+    setTimeout(function() {
+        console.log('[Olympus Essentials] Script started.');
+        initialize();
+        waitForRefresh();
+    }, 2000);
 })();
