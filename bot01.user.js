@@ -2,8 +2,8 @@
 // @name         Olympus Essentials - bot01
 // @namespace    oess
 // @author       pmpm2000
-// @description  Auto-invite to alliance by alliance forum, invite through discord bot
-// @version      0.1.0
+// @description  Auto-invite to alliance by alliance forum, invite through discord bot, alarms from temples
+// @version      0.3.1
 // @connect      *
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot01.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot01.user.js
@@ -20,23 +20,7 @@
     const maxSleepTime = 120000; // miliseconds
     let threadId=0, townId=0;
 
-
-    function initialize() {
-        threadId = uw.threadIds[account]; // ID of thread that the bot should subscribe
-        townId = uw.townIds[account]; // ID of the bot's town - it needs to own it all the time
-    }
-
-
-	function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-
-    function timeToSleep() {
-        return minSleepTime + Math.floor(Math.random() * (maxSleepTime - minSleepTime));
-    }
-
-
+// ============= FORUM INVS =============
     function findNicknames(text) {
         const nicknames = [];
         const toFind = "openPlayerProfile(&#039;";
@@ -64,7 +48,7 @@
         let startIndex = text.indexOf(toFind);
         startIndex = text.indexOf(toFind, startIndex+1);
         while (startIndex !== -1) {
-            const endIndex = text.indexOf("\\", startIndex + toFind.length);
+            const endIndex = text.indexOf("\">", startIndex + toFind.length);
             if (endIndex !== -1) {
             const post = text.substring(startIndex + toFind.length, endIndex);
             posts.push(parseInt(post));
@@ -118,7 +102,7 @@
 			    });
     }
 
-
+// ============= DISCORD INVS & PERMS =============
     function checkDiscord() {
         GM_xmlhttpRequest({
             method: "GET",
@@ -141,13 +125,93 @@
     }
 
 
+// ============= TEMPLE ALARMS =============
+    let alarmedAttacks = [];
+
+    function findTempleIds(text) {
+        let temples = [];
+        const toFind = "data-temple_id=\"";
+        let startIndex = text.indexOf(toFind);
+        while (startIndex !== -1) {
+            let endIndex = text.indexOf("\">", startIndex + toFind.length);
+            if (endIndex !== -1) {
+                const temple = text.substring(startIndex + toFind.length, endIndex);
+                try {
+                    temples.push(parseInt(temple));
+                } catch {
+                    startIndex = text.indexOf(toFind, endIndex);
+                    continue;
+                }
+                startIndex = text.indexOf(toFind, endIndex);
+            }
+            else break;
+        }
+        temples.splice(temples.length-1, 1);
+        return temples;
+    }
+
+    function alarm(temple_name, origin_town_name, sender_name) {
+        let str = uw.alliance_prefix[account] + uw.translations.attack_detected + temple_name + uw.translations.from + origin_town_name + " (" + sender_name + ")";
+        console.log("[Olympus Essentials]", str);
+        GM_xmlhttpRequest({
+            method: "POST",
+            url: uw.attackUrl,
+            headers: { "Content-Type": "text/plain" },
+            data: str
+        });
+    }
+
+    function ifAttack(movement) {
+        if(movement.type == "support" || alarmedAttacks.includes(movement.id)) return;
+        alarmedAttacks.push(movement.id);
+        const temple_name = movement.destination_town_name;
+        const origin_town_name = movement.origin_town_name;
+        const sender_name = movement.sender_name;
+        alarm(temple_name, origin_town_name, sender_name);
+    }
+
+    function checkIndividualTemple(templeId) {
+        const dataget = {"window_type":"olympus_temple_info","tab_type":"index","known_data":{"models":["Olympus"],"collections":["Temples","CustomColors"],"templates":["olympus_temple_info__temple_info","olympus_temple_info__command","olympus_temple_info__revolt","olympus_temple_info__temple_info_image","olympus_temple_info__temple_info_image_olympus","olympus_temple_info__olympus_curse","olympus_temple_info__temple_powers_overlay"]},"arguments":{"target_id":templeId,"activepagenr":0},"town_id":townId,"nl_init":true}
+        uw.gpAjax.ajaxGet('frontend_bridge', 'fetch', dataget, true, function(resp) {
+            resp.models.TempleInfo.data.movements.forEach(ifAttack);
+            console.log();
+        });
+    }
+
+    function checkTemples() {
+        const data = {"town_id":townId,"nl_init":true};
+        uw.gpAjax.ajaxPost('alliance', 'temple_overview', data, true, function(resp) {
+            let templeIds = findTempleIds(resp.html);
+            console.log("[Olympus Essentials] Temples to check:", templeIds);
+            templeIds.forEach(checkIndividualTemple);
+        });
+    }
+
+// ============= HELPERS =============
+    function initialize() {
+        threadId = uw.threadIds[account]; // ID of thread that the bot should subscribe
+        townId = uw.townIds[account]; // ID of the bot's town - it needs to own it all the time
+    }
+
+
+	function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+
+    function timeToSleep() {
+        return minSleepTime + Math.floor(Math.random() * (maxSleepTime - minSleepTime));
+    }
+
     async function waitForRefresh() {
         while(true) {
             let temp = timeToSleep();
-            console.log('[Olympus Essentials] Sleeping for ', Math.floor(temp/1000), ' seconds.');
+            console.log('[Olympus Essentials] Sleeping for', Math.floor(temp/1000), 'seconds.');
             await sleep(temp);
             checkForum();
             checkDiscord();
+            await sleep(6000);
+            checkTemples();
         }
     }
 
@@ -155,5 +219,5 @@
         console.log('[Olympus Essentials] Script started.');
         initialize();
         waitForRefresh();
-    }, 2000);
+    }, 5000);
 })();
