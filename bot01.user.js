@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance by alliance forum, invite through discord bot, alarms from temples
-// @version      0.3.1
+// @version      0.3.2
 // @connect      *
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot01.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot01.user.js
@@ -150,14 +150,17 @@
         return temples;
     }
 
-    function alarm(temple_name, origin_town_name, sender_name) {
+    function alarm(temple_name, origin_town_name, sender_name, movement_id) {
         let str = uw.alliance_prefix[account] + uw.translations.attack_detected + temple_name + uw.translations.from + origin_town_name + " (" + sender_name + ")";
         console.log("[Olympus Essentials]", str);
         GM_xmlhttpRequest({
             method: "POST",
             url: uw.attackUrl,
-            headers: { "Content-Type": "text/plain" },
-            data: str
+            headers: { "Content-Type": "application/json" },
+            data: JSON.stringify({
+                message: str,
+                id: movement_id
+            })
         });
     }
 
@@ -167,14 +170,14 @@
         const temple_name = movement.destination_town_name;
         const origin_town_name = movement.origin_town_name;
         const sender_name = movement.sender_name;
-        alarm(temple_name, origin_town_name, sender_name);
+        const movement_id = movement.id;
+        alarm(temple_name, origin_town_name, sender_name, movement_id);
     }
 
     function checkIndividualTemple(templeId) {
         const dataget = {"window_type":"olympus_temple_info","tab_type":"index","known_data":{"models":["Olympus"],"collections":["Temples","CustomColors"],"templates":["olympus_temple_info__temple_info","olympus_temple_info__command","olympus_temple_info__revolt","olympus_temple_info__temple_info_image","olympus_temple_info__temple_info_image_olympus","olympus_temple_info__olympus_curse","olympus_temple_info__temple_powers_overlay"]},"arguments":{"target_id":templeId,"activepagenr":0},"town_id":townId,"nl_init":true}
         uw.gpAjax.ajaxGet('frontend_bridge', 'fetch', dataget, true, function(resp) {
             resp.models.TempleInfo.data.movements.forEach(ifAttack);
-            console.log();
         });
     }
 
