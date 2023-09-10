@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance by alliance forum, invite through discord bot, alarms from temples
-// @version      0.4.1
+// @version      0.5.1
 // @connect      *
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot02.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot02.user.js
@@ -18,6 +18,7 @@
     const account = "bot02"; // unique id of the bot's acc - used to get data from external library
     const minSleepTime = 30000; // miliseconds
     const maxSleepTime = 120000; // miliseconds
+    const olympusId = 18404; // insert -1 if the olympus doesn't exist yet
     let threadId=0, townId=0;
 
 // ============= FORUM INVS =============
@@ -194,6 +195,7 @@
         const data = {"town_id":townId,"nl_init":true};
         uw.gpAjax.ajaxPost('alliance', 'temple_overview', data, true, function(resp) {
             let templeIds = findTempleIds(resp.html);
+            if (olympusId != -1) templeIds.push(olympusId);
             console.log("[Olympus Essentials] Temples to check:", templeIds);
             templeIds.forEach(checkIndividualTemple);
         });
