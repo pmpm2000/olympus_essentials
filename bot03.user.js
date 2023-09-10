@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance by alliance forum, invite through discord bot, alarms from temples
-// @version      0.3.2
+// @version      0.4.1
 // @connect      *
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot03.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot03.user.js
@@ -150,8 +150,8 @@
         return temples;
     }
 
-    function alarm(temple_name, origin_town_name, sender_name, movement_id) {
-        let str = uw.alliance_prefix[account] + uw.translations.attack_detected + temple_name + uw.translations.from + origin_town_name + " (" + sender_name + ")";
+    function alarm(temple_name, origin_town_name, sender_name, movement_id, if_takeover) {
+        let str = uw.alliance_prefix[account] + if_takeover + uw.translations.attack_detected + temple_name + uw.translations.from + origin_town_name + " (" + sender_name + ")";
         console.log("[Olympus Essentials]", str);
         GM_xmlhttpRequest({
             method: "POST",
@@ -165,13 +165,22 @@
     }
 
     function ifAttack(movement) {
-        if(movement.type == "support" || alarmedAttacks.includes(movement.id)) return;
+        if(movement.type == "support" || alarmedAttacks.includes(movement.id) || movement.type == "portal_support_olympus" || movement.type == "portal_attack_olympus") return;
         alarmedAttacks.push(movement.id);
         const temple_name = movement.destination_town_name;
         const origin_town_name = movement.origin_town_name;
         const sender_name = movement.sender_name;
         const movement_id = movement.id;
-        alarm(temple_name, origin_town_name, sender_name, movement_id);
+        let if_takeover;
+        if(movement.type == "attack_takeover") {
+            if_takeover = " ATAK Z KOLONEM";
+            console.log("setting if_takeover to 1");
+        }
+        else {
+            if_takeover = "";
+            console.log("setting if_takeover to 0");
+        }
+        alarm(temple_name, origin_town_name, sender_name, movement_id, if_takeover);
     }
 
     function checkIndividualTemple(templeId) {
