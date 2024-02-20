@@ -16,8 +16,8 @@
     // "alliance1", "alliance2", "attack" etc. are also default. Don't change.
     const discordUrls = {
         "bot01": "http://123.456.789.012:8002/alliance1",
-        "bot02": "http://123.456.789.012:8002/alliance3",
-        "bot03": "http://123.456.789.012:8002/alliance2",
+        "bot02": "http://123.456.789.012:8002/alliance2",
+        "bot03": "http://123.456.789.012:8002/alliance3",
         "bot04": "http://123.456.789.012:8002/alliance4",
         "bot05": "http://123.456.789.012:8002/alliance5"
     };
