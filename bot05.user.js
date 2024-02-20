@@ -18,7 +18,6 @@
     const account = "bot05"; // unique id of the bot's acc - used to get data from external library
     const minSleepTime = 30000; // miliseconds
     const maxSleepTime = 120000; // miliseconds
-    const olympusId = 18404; // insert -1 if the olympus doesn't exist yet
     let threadId=0, townId=0;
 
 // ============= FORUM INVS =============
@@ -205,6 +204,7 @@
     function initialize() {
         threadId = uw.threadIds[account]; // ID of thread that the bot should subscribe
         townId = uw.townIds[account]; // ID of the bot's town - it needs to own it all the time
+		const olympusId = uw.olympusId;
     }
 
 

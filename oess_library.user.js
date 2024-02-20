@@ -60,4 +60,7 @@
         "from": ". Wyslano z "
     };
     uw.translations = translations;
+	
+	// insert Olympus ID - leave -1 if the Olympus doesn't exist yet
+	uw.olympusId = -1
 })();
