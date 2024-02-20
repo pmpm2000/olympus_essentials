@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance by alliance forum, invite through discord bot, alarms from temples
-// @version      0.5.1
+// @version      0.5.2
 // @connect      *
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot05.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot05.user.js
