@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Olympus Essentials - library
 // @namespace    oess
-// @version      0.0.2
+// @version      0.0.3
 // @description  Library for Olympus Essentials
 // @author       pmpm2000
 // @match        http://*.grepolis.com/game/*
@@ -19,7 +19,8 @@
         "bot02": "http://123.456.789.012:8002/alliance2",
         "bot03": "http://123.456.789.012:8002/alliance3",
         "bot04": "http://123.456.789.012:8002/alliance4",
-        "bot05": "http://123.456.789.012:8002/alliance5"
+        "bot05": "http://123.456.789.012:8002/alliance5",
+		"bot06": "http://123.456.789.012:8002/alliance6"
     };
     uw.discordUrls = discordUrls;
     uw.attackUrl = "http://123.456.789.012/attack";
@@ -30,7 +31,8 @@
         "bot02": "[PREDATORS II]",
         "bot03": "[PREDATORS III]",
         "bot04": "[PREDATORS IV]",
-        "bot05": "[PREDATORS V]"
+        "bot05": "[PREDATORS V]",
+		"bot06": "[PREDATORS VI]"
     };
     uw.alliance_prefix = alliance_prefix;
 	
@@ -40,7 +42,8 @@
         "bot02": 1232,
         "bot03": 4325,
         "bot04": 5432,
-        "bot05": 6442
+        "bot05": 6442,
+		"bot06": 6445
     };
     uw.threadIds = threadIds;
 	
@@ -50,14 +53,16 @@
         "bot02": 13432,
         "bot03": 10018,
         "bot04": 19200,
-        "bot05": 21232
+        "bot05": 21232,
+		"bot06": 21455
     };
     uw.townIds = townIds;
 	
 	// translate to your language
     const translations = {
         "attack_detected": " Wykryto atak na swiatynie ",
-        "from": ". Wyslano z "
+        "from": ". Wyslano z ",
+        "time": "Czas wejscia: "
     };
     uw.translations = translations;
 	
