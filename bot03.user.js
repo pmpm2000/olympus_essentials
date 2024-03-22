@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance by alliance forum, invite through discord bot, alarms from temples
-// @version      0.5.2
+// @version      0.6.0
 // @connect      *
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot03.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot03.user.js
@@ -150,8 +150,8 @@
         return temples;
     }
 
-    function alarm(temple_name, origin_town_name, sender_name, movement_id, if_takeover) {
-        let str = uw.alliance_prefix[account] + if_takeover + uw.translations.attack_detected + temple_name + uw.translations.from + origin_town_name + " (" + sender_name + ")";
+    function alarm(temple_name, origin_town_name, sender_name, movement_id, if_takeover, arrival_at) {
+        let str = uw.alliance_prefix[account] + if_takeover + uw.translations.attack_detected + temple_name + uw.translations.from + origin_town_name + " (" + sender_name + "). " + uw.translations.time + arrival_at;
         console.log("[Olympus Essentials]", str);
         GM_xmlhttpRequest({
             method: "POST",
@@ -171,6 +171,8 @@
         const origin_town_name = movement.origin_town_name;
         const sender_name = movement.sender_name;
         const movement_id = movement.id;
+        const date = new Date(movement.arrival_at);
+        const arrival_at = date.getHours + ":" + date.getMinutes + ":" + date.getSeconds;
         let if_takeover;
         if(movement.type == "attack_takeover") {
             if_takeover = " ATAK Z KOLONEM";
@@ -180,7 +182,7 @@
             if_takeover = "";
             console.log("setting if_takeover to 0");
         }
-        alarm(temple_name, origin_town_name, sender_name, movement_id, if_takeover);
+        alarm(temple_name, origin_town_name, sender_name, movement_id, if_takeover, arrival_at);
     }
 
     function checkIndividualTemple(templeId) {
