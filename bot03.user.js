@@ -172,7 +172,7 @@
         const sender_name = movement.sender_name;
         const movement_id = movement.id;
         const date = new Date(movement.arrival_at);
-        const arrival_at = date.getHours + ":" + date.getMinutes + ":" + date.getSeconds;
+        const arrival_at = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         let if_takeover;
         if(movement.type == "attack_takeover") {
             if_takeover = " ATAK Z KOLONEM";
