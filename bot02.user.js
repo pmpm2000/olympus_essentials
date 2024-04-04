@@ -171,8 +171,12 @@
         const origin_town_name = movement.origin_town_name;
         const sender_name = movement.sender_name;
         const movement_id = movement.id;
-        const date = new Date(movement.arrival_at);
-        const arrival_at = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        const timestamp = movement.arrival_at * 1000;
+        const date = new Date(timestamp);
+        const hours = ("0" + (date.getHours()+2)).slice(-2);
+        const minutes = ("0" + date.getMinutes()).slice(-2);
+        const seconds = ("0" +  date.getSeconds()).slice(-2);
+        const arrival_at = hours + ":" + minutes + ":" + seconds;
         let if_takeover;
         if(movement.type == "attack_takeover") {
             if_takeover = " ATAK Z KOLONEM";
