@@ -3,7 +3,7 @@
 // @namespace    oess
 // @author       pmpm2000
 // @description  Auto-invite to alliance by alliance forum, invite through discord bot, alarms from temples
-// @version      0.6.2
+// @version      0.6.3
 // @connect      *
 // @downloadURL  https://github.com/pmpm2000/olympus_essentials/raw/main/bot02.user.js
 // @updateURL    https://github.com/pmpm2000/olympus_essentials/raw/main/bot02.user.js
@@ -173,7 +173,7 @@
         const movement_id = movement.id;
         const timestamp = movement.arrival_at * 1000;
         const date = new Date(timestamp);
-        const hours = ("0" + (date.getHours()+2)).slice(-2);
+        const hours = ("0" + (date.getHours()+server_time)).slice(-2);
         const minutes = ("0" + date.getMinutes()).slice(-2);
         const seconds = ("0" +  date.getSeconds()).slice(-2);
         const arrival_at = hours + ":" + minutes + ":" + seconds;
@@ -211,6 +211,25 @@
         threadId = uw.threadIds[account]; // ID of thread that the bot should subscribe
         townId = uw.townIds[account]; // ID of the bot's town - it needs to own it all the time
 		const olympusId = uw.olympusId;
+        let body = {"types":[{"type":"map","param":{"x":8,"y":7}},{"type":"bar"},{"type":"backbone"}],"town_id":townId,"nl_init":false};
+        uw.gpAjax.ajaxPost('data', 'get', body, true, {
+                success: function(layout, resp, succ, t_token) {
+                    let server_time = getTimestampAndSetZone(resp);    
+                }
+            });
+    }
+
+    function getTimestampAndSetZone(resp) {
+        timestamp = resp.json.map.data.data.data[0].chunk.timestamp * 1000;
+        now = Date.now();
+        now = new Date(now);
+        timestamp = new Date(timestamp);
+        timezone = timestamp.getHours() - now.getHours();
+        if (timestamp.getMinutes() > now.getMinutes() && now.getMinutes < 1) {
+            timezone += 1;
+        }
+        return timezone;
+
     }
 
 
